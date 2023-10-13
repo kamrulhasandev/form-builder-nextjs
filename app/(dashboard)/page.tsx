@@ -176,7 +176,7 @@ function FormCard({ form }: { form: Form }) {
             </Link>
           </Button>
         )}
-        {form.published && (
+        {!form.published && (
           <Button asChild variant={"secondary"} className="w-full mt-2 text-md gap-4">
             <Link href={`/builder/${form.id}`} className="text-sm">
               Edit form <FaEdit />
