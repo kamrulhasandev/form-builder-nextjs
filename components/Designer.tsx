@@ -18,16 +18,16 @@ function Designer() {
 
   useDndMonitor({
     onDragEnd: (event: DragEndEvent) => {
-      const {active, over} = event;
-      if(!active || !over) return;
+      const { active, over } = event;
+      if (!active || !over) return;
 
       const isDesignerBtnElement = active.data?.current?.isDesignerBtnElement;
-      if(isDesignerBtnElement){
+      if (isDesignerBtnElement) {
         const type = active.data?.current?.type;
         const newElement = FormElement[type as ElementsType].construct(
           idGenerator()
-        )
-        addElement(0, newElement)
+        );
+        addElement(0, newElement);
         console.log("NEW Element", newElement);
       }
 
@@ -55,14 +55,13 @@ function Designer() {
               <div className="h-[120px] rounded-md bg-primary/20"></div>
             </div>
           )}
-          {
-            elements.length > 0 && 
+          {elements.length > 0 && (
             <div className="flex flex-col  w-full gap-2 p-4">
-              {elements.map(element => (
-                <DesignerElementWrapper key={element.id} element={element}/>
+              {elements.map((element) => (
+                <DesignerElementWrapper key={element.id} element={element} />
               ))}
             </div>
-          }
+          )}
         </div>
       </div>
       <DesignerSidebar />
@@ -70,10 +69,40 @@ function Designer() {
   );
 }
 
+function DesignerElementWrapper({ element }: { element: FormElementInstance }) {
+  const topHalf = useDroppable({
+    id: element.id + "-top",
+    data: {
+      type: element.type,
+      elementId: element.id,
+      isTopHalfDesignerElement: true,
+    },
+  });
+  const bottomHalf = useDroppable({
+    id: element.id + "-bottom",
+    data: {
+      type: element.type,
+      elementId: element.id,
+      isBottomHalfDesignerElement: true,
+    },
+  });
 
-function DesignerElementWrapper({element}: {element: FormElementInstance}){
   const DesignerElement = FormElement[element.type].designerComponent;
-  return <DesignerElement elementInstance={element}/>
+  return (
+    <div className="relative h-[120px] flex flex-col text-foreground hover:cursor-pointer rounded-md ring-1 ring-accent ring-inset">
+      <div
+        ref={topHalf.setNodeRef}
+        className="absolute  w-full h-1/2 rounded-t-md"
+      ></div>
+      <div
+        ref={bottomHalf.setNodeRef}
+        className="absolute  w-full h-1/2 bottom-0 rounded-b-md"
+      ></div>
+      <div className="flex w-full h-[120px] items-center rounded-md bg-accent/40 px-4 py-2 pointer-events-none">
+        <DesignerElement elementInstance={element} />
+      </div>
+    </div>
+  );
 }
 
 export default Designer;
