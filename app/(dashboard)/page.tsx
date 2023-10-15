@@ -89,7 +89,7 @@ function StatsCards(props: statsCardProps) {
     </div>
   );
 }
-function StatsCard({
+export function StatsCard({
   title,
   value,
   icon,
