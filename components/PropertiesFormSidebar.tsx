@@ -3,11 +3,12 @@ import useDesigner from "./hooks/useDesigner";
 import { FormElement } from "./FormElements";
 import { Button } from "./ui/button";
 import { AiOutlineClose } from "react-icons/ai";
+import { Separator } from "./ui/separator";
 
 function PropertiesFormSidebar() {
   const { selectedElement, setSelectedElement } = useDesigner();
   if (!selectedElement) return null;
-  const PropertiesForm = FormElement[selectedElement.type].formComponent;
+  const PropertiesForm = FormElement[selectedElement.type].propertiesComponent;
   return (
     <div className="flex flex-col p-2">
       <div className="flex justify-between items-center">
@@ -22,7 +23,8 @@ function PropertiesFormSidebar() {
           <AiOutlineClose />
         </Button>
       </div>
-      <PropertiesForm />
+      <Separator className="mb-4"/>
+      <PropertiesForm elementInstance={selectedElement} />
     </div>
   );
 }
