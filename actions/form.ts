@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { formSchema, formSchemaType } from "@/schemas/form";
 import { currentUser } from "@clerk/nextjs";
+
 class UserNotFoundErr extends Error {}
 
 export async function GetFormStats() {
@@ -11,7 +12,7 @@ export async function GetFormStats() {
     throw new UserNotFoundErr();
   }
 
-  const stats = prisma.form.aggregate({
+  const stats = await prisma.form.aggregate({
     where: {
       userId: user.id,
     },
@@ -20,17 +21,24 @@ export async function GetFormStats() {
       submissions: true,
     },
   });
-  const visits = (await stats)._sum.visits || 0;
-  const submissions = (await stats)._sum.submissions || 0;
+
+  const visits = stats._sum.visits || 0;
+  const submissions = stats._sum.submissions || 0;
 
   let submissionRate = 0;
+
   if (visits > 0) {
     submissionRate = (submissions / visits) * 100;
   }
 
   const bounceRate = 100 - submissionRate;
 
-  return { visits, submissions, submissionRate, bounceRate };
+  return {
+    visits,
+    submissions,
+    submissionRate,
+    bounceRate,
+  };
 }
 
 export async function CreateForm(data: formSchemaType) {
@@ -82,6 +90,7 @@ export async function GetFormById(id: number) {
   if (!user) {
     throw new UserNotFoundErr();
   }
+
   return await prisma.form.findUnique({
     where: {
       userId: user.id,
@@ -122,4 +131,33 @@ export async function PublishForm(id: number) {
       id,
     },
   });
+}
+
+export async function GetFormContentByUrl(formUrl: string) {
+  const form = await prisma.form.findFirst({
+    where: {
+      shareURL: formUrl,
+    },
+  });
+  
+  if (!form) {
+    throw new Error("Form not found");
+  }
+  
+  const updatedForm = await prisma.form.update({
+    where: {
+      id: form.id,
+    },
+    data: {
+      visits: {
+        increment: 1,
+      },
+    },
+    select: {
+      content: true,
+    },
+  });
+  
+  return updatedForm;
+  
 }
