@@ -66,6 +66,7 @@ export const TextFieldFormElement: FormElement = {
     if (element.extraAttributes.required) {
       return currentValue.length > 0;
     }
+
     return true;
   },
 };
@@ -100,14 +101,16 @@ function FormComponent({
   elementInstance,
   submitValue,
   isInvalid,
+  defaultValue,
 }: {
   elementInstance: FormElementInstance;
   submitValue?: SubmitFunction;
   isInvalid?: boolean;
+  defaultValue?: string;
 }) {
   const element = elementInstance as CustomInstance;
 
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(defaultValue || "");
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -118,14 +121,13 @@ function FormComponent({
   return (
     <div className="flex flex-col gap-2 w-full">
       <Label className={cn(error && "text-red-500")}>
-        {label} {required && "*"}
+        {label}
+        {required && "*"}
       </Label>
       <Input
         className={cn(error && "border-red-500")}
         placeholder={placeHolder}
-        onChange={(e) => {
-          setValue(e.target.value);
-        }}
+        onChange={(e) => setValue(e.target.value)}
         onBlur={(e) => {
           if (!submitValue) return;
           const valid = TextFieldFormElement.validate(element, e.target.value);
