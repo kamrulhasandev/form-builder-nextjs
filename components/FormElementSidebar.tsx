@@ -17,6 +17,11 @@ function FormElementSidebar() {
         <SidebarBtnElement formElement={FormElement.SpacerField} />
         <p className="text-sm text-foreground col-span-1 md:col-span-2 my-2 place-self-start">Form Elements</p>
         <SidebarBtnElement formElement={FormElement.TextField} />
+        <SidebarBtnElement formElement={FormElement.NumberField} />
+        <SidebarBtnElement formElement={FormElement.TextAreaField} />
+        <SidebarBtnElement formElement={FormElement.DateField} />
+        <SidebarBtnElement formElement={FormElement.SelectField} />
+        <SidebarBtnElement formElement={FormElement.CheckboxField} />
       </div>
     </div>
   );
