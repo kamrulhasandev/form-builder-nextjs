@@ -2,36 +2,41 @@ import { TextFieldFormElement } from "./fields/TextField";
 
 export type ElementsType = "TextField";
 
+export type SubmitFunction = (key: string, value: string) => void;
+
 export type FormElement = {
-     type: ElementsType
-     construct: (id: string) => FormElementInstance
+  type: ElementsType;
+  construct: (id: string) => FormElementInstance;
 
-    designerBtnElement: {
-        icon: React.ElementType;
-        label: string;
-    }
+  designerBtnElement: {
+    icon: React.ElementType;
+    label: string;
+  };
 
-     designerComponent: React.FC<{
-        elementInstance: FormElementInstance;
-     }>;
-     formComponent: React.FC<{
-        elementInstance: FormElementInstance;
-     }>;
-     propertiesComponent: React.FC<{
-        elementInstance: FormElementInstance;
-     }>;
-}
+  designerComponent: React.FC<{
+    elementInstance: FormElementInstance;
+  }>;
+  formComponent: React.FC<{
+    elementInstance: FormElementInstance;
+    submitValue?: SubmitFunction;
+    isInvalid?: boolean;
+  }>;
+  propertiesComponent: React.FC<{
+    elementInstance: FormElementInstance;
+  }>;
 
-export type FormElementInstance = {
-    id: string;
-    type: ElementsType;
-    extraAttributes?: Record<string, any>
-}
-
-type FormElementType = {
-    [key in ElementsType] : FormElement
-}
-export const FormElement : FormElementType = {
-    TextField: TextFieldFormElement
+  validate: (FormElement: FormElementInstance, currentValue: string) => boolean;
 };
 
+export type FormElementInstance = {
+  id: string;
+  type: ElementsType;
+  extraAttributes?: Record<string, any>;
+};
+
+type FormElementType = {
+  [key in ElementsType]: FormElement;
+};
+export const FormElement: FormElementType = {
+  TextField: TextFieldFormElement,
+};
